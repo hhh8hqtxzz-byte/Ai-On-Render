@@ -132,7 +132,7 @@ class SMSSender:
         self.ms_token = ""
 
     def _refresh_tokens(self):
-        params = {"aid": "5049", "account_sdk_source": "web",
+        params = {"aid": "2960", "account_sdk_source": "web",
                   "sdk_version": "2.1.10-tiktok", "language": "en"}
         body = "hashed_id=init&type=1"
         from urllib.parse import urlencode
@@ -151,9 +151,9 @@ class SMSSender:
         if not self.csrf:
             self._refresh_tokens()
         encoded = encode_phone(phone)
-        body = f"mix_mode=1&mobile={encoded}&type=3731&language=en&fixed_mix_mode=1"
+        body = f"mix_mode=1&mobile={encoded}&type=3635&language=en&fixed_mix_mode=1"
         from urllib.parse import urlencode
-        params = {"aid": "5049", "account_sdk_source": "web",
+        params = {"aid": "2960", "account_sdk_source": "web",
                   "sdk_version": "2.1.10-tiktok", "language": "en",
                   "verifyFp": f"verify_{int(time.time())}_{os.urandom(4).hex()}"}
         if self.ms_token:
