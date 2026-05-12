@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUDASIR | SMS Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #050505; --accent: #FF4500; --card: #111111; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: white; margin: 0; overflow-x: hidden; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        @keyframes float-hand-left { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-20px) rotate(2deg); } }
+        @keyframes float-hand-right { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(20px) rotate(-2deg); } }
+        .animate-float-left { animation: float-hand-left 12s ease-in-out infinite; }
+        .animate-float-right { animation: float-hand-right 14s ease-in-out infinite; }
+
+        .noise-overlay { position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0.05; mix-blend-mode: overlay; background-image: url("https://grainy-gradients.vercel.app/noise.svg"); }
+
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(255,69,0,0.2); } 50% { box-shadow: 0 0 40px rgba(255,69,0,0.5); } }
+        .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+        @keyframes slide-in { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        .slide-in { animation: slide-in 0.4s ease-out forwards; }
+
+        @keyframes count-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+        .count-bump { animation: count-pulse 0.3s ease-out; }
+
+        .drag-over { border-color: #FF4500 !important; background: rgba(255,69,0,0.05) !important; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FF4500; }
+
+        textarea:focus, input:focus, select:focus { outline: none; border-color: #FF4500 !important; }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen bg-[#050505] selection:bg-[#FF4500] selection:text-white">
+        <div class="noise-overlay"></div>
+
+        <!-- Navigation -->
+        <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 py-8">
+            <div class="container mx-auto px-6 flex items-center justify-between">
+                <a href="#" class="text-2xl font-bold tracking-tighter font-serif">MUDASIR.</a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#engine" class="text-sm text-gray-400 hover:text-white transition-colors duration-300">Engine</a>
+                    <a href="#results" class="text-sm text-gray-400 hover:text-white transition-colors duration-300">Results</a>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="live-clock" class="text-xs text-gray-500 font-mono"></span>
+                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden pt-32 pb-10 bg-[#050505]">
+            <div class="absolute inset-0 z-0 pointer-events-none select-none">
+                <div class="absolute top-0 left-0 w-full h-full opacity-60 mix-blend-screen">
+                    <img src="https://framerusercontent.com/images/9zvwRJAavKKacVyhFCwHyXW1U.png?width=1536&height=1024" alt="" class="w-full h-full object-cover object-center opacity-80">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050505] z-10"></div>
+            </div>
+
+            <div class="absolute -left-[10%] top-[-10%] md:left-[-5%] md:top-[-15%] w-[50vw] md:w-[40vw] max-w-[800px] z-10 pointer-events-none mix-blend-hard-light opacity-80 animate-float-left">
+                <img src="https://framerusercontent.com/images/KNhiA5A2ykNYqNkj04Hk6BVg5A.png?width=1540&height=1320" alt="" class="w-full h-auto object-contain">
+            </div>
+            <div class="absolute -right-[10%] bottom-[-10%] md:right-[-5%] md:bottom-[-5%] w-[45vw] md:w-[35vw] max-w-[700px] z-10 pointer-events-none mix-blend-hard-light opacity-80 animate-float-right">
+                <img src="https://framerusercontent.com/images/X89VFCABCEjjZ4oLGa3PjbOmsA.png?width=1542&height=1002" alt="" class="w-full h-auto object-contain">
+            </div>
+
+            <div class="container mx-auto px-6 relative z-20 text-center flex flex-col items-center">
+                <div id="hero-content-wrapper" class="max-w-4xl mx-auto">
+                    <div class="reveal">
+                        <h1 class="text-5xl md:text-7xl font-medium leading-[1.1] tracking-tight mb-6 text-[#ffe0e0] mix-blend-overlay font-serif" style="text-shadow: 0 0 12px rgba(255,255,255,0.71);">
+                            MUDASIR. <br/>
+                            <span class="italic font-light text-[#ffe0e0]">The SMS engine.</span>
+                        </h1>
+                    </div>
+                    <div class="reveal" style="transition-delay: 200ms;">
+                        <p class="text-base md:text-lg text-[#ffe0e0]/90 max-w-lg mx-auto mb-12 font-light tracking-wide leading-relaxed mix-blend-overlay" style="text-shadow: 0 0 12px rgba(255,255,255,0.71);">
+                            Pure HTTP. Zero dependencies. Unlimited reach.<br>
+                            SoundOn SMS verification — engineered for precision.
+                        </p>
+                    </div>
+                    <div class="reveal flex flex-col items-center gap-4" style="transition-delay: 400ms;">
+                        <a href="#engine" class="relative group cursor-pointer">
+                            <div class="absolute inset-0 bg-[#FF4500]/20 blur-xl rounded-full opacity-0 group-hover:opacity-50 transition-opacity duration-500"></div>
+                            <div class="relative border border-white/20 bg-white/5 backdrop-blur-sm px-6 py-2 rounded-full flex items-center gap-3 text-xs md:text-sm text-white/80 uppercase tracking-widest hover:bg-white/10 transition-colors duration-300">
+                                <iconify-icon icon="lucide:zap" class="text-[#FF4500]"></iconify-icon>
+                                <span>Launch Engine</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Bar -->
+        <section class="py-8 border-y border-white/5">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-3 gap-8 text-center">
+                    <div class="reveal">
+                        <div id="stat-sent" class="text-3xl md:text-4xl font-bold text-[#FF4500] font-serif">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Sent</div>
+                    </div>
+                    <div class="reveal" style="transition-delay:100ms">
+                        <div id="stat-failed" class="text-3xl md:text-4xl font-bold text-white/20 font-serif">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Failed</div>
+                    </div>
+                    <div class="reveal" style="transition-delay:200ms">
+                        <div id="stat-total" class="text-3xl md:text-4xl font-bold text-white/40 font-serif">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Total</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Engine Section -->
+        <section id="engine" class="py-20 relative">
+            <div class="container mx-auto px-6">
+                <div class="reveal mb-16 text-center">
+                    <h2 class="text-4xl md:text-5xl font-serif">Configure <span class="italic">& Launch</span></h2>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                    <!-- Left: Input Panel -->
+                    <div class="reveal">
+                        <div class="bg-[#111] border border-white/10 rounded-3xl p-8 space-y-6">
+                            <!-- File Upload -->
+                            <div>
+                                <label class="text-xs text-gray-400 uppercase tracking-widest mb-3 block">Upload Numbers (CSV / TXT)</label>
+                                <div id="drop-zone" class="border-2 border-dashed border-white/10 rounded-2xl p-8 text-center cursor-pointer hover:border-[#FF4500]/50 transition-all duration-300">
+                                    <input type="file" id="file-input" accept=".csv,.txt" class="hidden">
+                                    <iconify-icon icon="lucide:upload-cloud" class="text-4xl text-gray-500 mb-3"></iconify-icon>
+                                    <p class="text-sm text-gray-400">Drag & drop or <span class="text-[#FF4500] cursor-pointer" onclick="document.getElementById('file-input').click()">browse</span></p>
+                                    <p class="text-xs text-gray-600 mt-1">Auto-cleans: removes text, keeps only phone numbers</p>
+                                </div>
+                                <div id="file-info" class="hidden mt-3 text-sm text-green-400 flex items-center gap-2">
+                                    <iconify-icon icon="lucide:check-circle"></iconify-icon>
+                                    <span id="file-info-text"></span>
+                                </div>
+                            </div>
+
+                            <!-- Manual Numbers -->
+                            <div>
+                                <label class="text-xs text-gray-400 uppercase tracking-widest mb-3 block">Manual Numbers (one per line)</label>
+                                <textarea id="numbers-input" rows="6"
+                                    class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-sm text-white placeholder-gray-600 resize-none font-mono"
+                                    placeholder="+923001234567&#10;+923002222222&#10;+14155551234"></textarea>
+                                <div class="flex justify-between mt-2">
+                                    <span id="number-count" class="text-xs text-gray-500">0 numbers</span>
+                                    <button onclick="cleanNumbers()" class="text-xs text-[#FF4500] hover:underline">Clean & Format</button>
+                                </div>
+                            </div>
+
+                            <!-- Proxy -->
+                            <div>
+                                <label class="text-xs text-gray-400 uppercase tracking-widest mb-3 block">Proxy (optional)</label>
+                                <input id="proxy-input" type="text"
+                                    class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-sm text-white placeholder-gray-600 font-mono"
+                                    placeholder="http://user:pass@host:port">
+                            </div>
+
+                            <!-- Delay Settings -->
+                            <div>
+                                <label class="text-xs text-gray-400 uppercase tracking-widest mb-3 block">Request Delay</label>
+                                <div class="grid grid-cols-3 gap-2 mb-3">
+                                    <button onclick="setDelay('zero')" id="btn-zero" class="delay-btn bg-[#FF4500] text-white text-xs py-2 rounded-lg font-medium transition-all">Zero</button>
+                                    <button onclick="setDelay('fixed')" id="btn-fixed" class="delay-btn bg-white/5 text-gray-400 text-xs py-2 rounded-lg font-medium hover:bg-white/10 transition-all">Fixed</button>
+                                    <button onclick="setDelay('random')" id="btn-random" class="delay-btn bg-white/5 text-gray-400 text-xs py-2 rounded-lg font-medium hover:bg-white/10 transition-all">Random</button>
+                                </div>
+                                <div id="delay-config" class="hidden grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-[10px] text-gray-500 mb-1 block">Min (sec)</label>
+                                        <input id="delay-min" type="number" value="1" min="0" step="0.5"
+                                            class="w-full bg-black/50 border border-white/10 rounded-lg p-2 text-sm text-white text-center">
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] text-gray-500 mb-1 block">Max (sec)</label>
+                                        <input id="delay-max" type="number" value="5" min="0" step="0.5"
+                                            class="w-full bg-black/50 border border-white/10 rounded-lg p-2 text-sm text-white text-center">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3 mt-6">
+                            <button id="btn-launch" onclick="launchBlast()"
+                                class="flex-1 bg-[#FF4500] hover:bg-[#ff5722] text-white font-medium py-4 rounded-2xl text-sm uppercase tracking-widest transition-all duration-300 hover:shadow-[0_10px_40px_rgba(255,69,0,0.3)] flex items-center justify-center gap-2">
+                                <iconify-icon icon="lucide:rocket"></iconify-icon>
+                                Launch Blast
+                            </button>
+                            <button id="btn-stop" onclick="stopBlast()" disabled
+                                class="px-6 bg-white/5 text-gray-500 font-medium py-4 rounded-2xl text-sm uppercase tracking-widest transition-all duration-300 hover:bg-red-500/20 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed">
+                                <iconify-icon icon="lucide:square"></iconify-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Results Panel -->
+                    <div class="reveal" style="transition-delay:150ms" id="results">
+                        <div class="bg-[#111] border border-white/10 rounded-3xl p-8 h-full flex flex-col">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-serif">Live Results</h3>
+                                <div id="job-status" class="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                                    <div id="status-dot" class="w-2 h-2 rounded-full bg-gray-600"></div>
+                                    <span id="status-text">Idle</span>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="w-full h-1 bg-white/5 rounded-full mb-6 overflow-hidden">
+                                <div id="progress-bar" class="h-full bg-[#FF4500] rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+
+                            <!-- Results List -->
+                            <div id="results-list" class="flex-1 overflow-y-auto space-y-2 max-h-[500px] min-h-[300px]">
+                                <div class="text-center text-gray-600 py-16 text-sm">
+                                    <iconify-icon icon="lucide:inbox" class="text-3xl mb-3 block mx-auto"></iconify-icon>
+                                    Results will appear here
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] opacity-10 pointer-events-none"
+                 style="background-image: radial-gradient(circle, #333 1px, transparent 1px); background-size: 40px 40px;"></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-20 border-t border-white/5 bg-[#050505] relative overflow-hidden">
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
+                    <div class="w-full md:w-auto">
+                        <h2 class="text-[10vw] leading-[0.8] tracking-tighter text-white/10 font-bold select-none pointer-events-none">MUDASIR.</h2>
+                    </div>
+                    <div class="flex flex-col gap-4 text-right">
+                        <p class="text-sm text-gray-600">Pure HTTP SMS Engine</p>
+                        <p class="text-sm text-gray-600">Powered by X-Bogus Signature</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+    // ─── State ───
+    let currentJobId = null;
+    let ws = null;
+    let delayMode = 'zero';
+
+    // ─── Reveal Animation ───
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // ─── Nav scroll ───
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            nav.classList.add('py-4', 'bg-[#050505]/80', 'backdrop-blur-md', 'border-b', 'border-white/5');
+            nav.classList.remove('py-8');
+        } else {
+            nav.classList.remove('py-4', 'bg-[#050505]/80', 'backdrop-blur-md', 'border-b', 'border-white/5');
+            nav.classList.add('py-8');
+        }
+    });
+
+    // ─── Hero parallax ───
+    const heroW = document.getElementById('hero-content-wrapper');
+    window.addEventListener('scroll', () => {
+        const s = window.scrollY;
+        if (s < 1000) { heroW.style.transform = `translateY(${s*0.4}px)`; heroW.style.opacity = Math.max(0, 1-s/600); }
+    });
+
+    // ─── Clock ───
+    function updateClock() {
+        const d = new Date();
+        document.getElementById('live-clock').textContent =
+            d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+    }
+    setInterval(updateClock, 1000); updateClock();
+
+    // ─── Number counter ───
+    const numbersInput = document.getElementById('numbers-input');
+    numbersInput.addEventListener('input', () => {
+        const lines = numbersInput.value.split('\n').filter(l => l.trim());
+        document.getElementById('number-count').textContent = `${lines.length} number${lines.length !== 1 ? 's' : ''}`;
+    });
+
+    // ─── File Upload / Drag & Drop ───
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+
+    async function handleFile(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const res = await fetch('/api/clean', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.numbers && data.numbers.length) {
+                const existing = numbersInput.value.trim();
+                const newNums = data.numbers.join('\n');
+                numbersInput.value = existing ? existing + '\n' + newNums : newNums;
+                numbersInput.dispatchEvent(new Event('input'));
+                document.getElementById('file-info').classList.remove('hidden');
+                document.getElementById('file-info-text').textContent =
+                    `${file.name} → ${data.count} numbers extracted`;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // ─── Clean Numbers ───
+    function cleanNumbers() {
+        const lines = numbersInput.value.split('\n');
+        const cleaned = [];
+        for (let line of lines) {
+            line = line.trim();
+            if (!line) continue;
+            let num = line.replace(/[^\d+]/g, '');
+            if (!num.startsWith('+') && num.length >= 10) num = '+' + num;
+            if (num.length >= 10) cleaned.push(num);
+        }
+        numbersInput.value = [...new Set(cleaned)].join('\n');
+        numbersInput.dispatchEvent(new Event('input'));
+    }
+
+    // ─── Delay Mode ───
+    function setDelay(mode) {
+        delayMode = mode;
+        document.querySelectorAll('.delay-btn').forEach(b => {
+            b.classList.remove('bg-[#FF4500]', 'text-white');
+            b.classList.add('bg-white/5', 'text-gray-400');
+        });
+        document.getElementById('btn-' + mode).classList.remove('bg-white/5', 'text-gray-400');
+        document.getElementById('btn-' + mode).classList.add('bg-[#FF4500]', 'text-white');
+        document.getElementById('delay-config').classList.toggle('hidden', mode === 'zero');
+    }
+
+    // ─── Launch Blast ───
+    async function launchBlast() {
+        const numbers = numbersInput.value.trim();
+        if (!numbers) return alert('Enter at least one number');
+
+        const proxy = document.getElementById('proxy-input').value.trim();
+        const delayMin = parseFloat(document.getElementById('delay-min').value) || 0;
+        const delayMax = parseFloat(document.getElementById('delay-max').value) || 0;
+
+        // Reset UI
+        document.getElementById('results-list').innerHTML = '';
+        updateStats(0, 0, 0);
+        document.getElementById('progress-bar').style.width = '0%';
+
+        // Disable launch, enable stop
+        document.getElementById('btn-launch').disabled = true;
+        document.getElementById('btn-launch').classList.add('opacity-50');
+        document.getElementById('btn-stop').disabled = false;
+        setStatus('starting', '#FF4500');
+
+        const form = new FormData();
+        form.append('numbers', numbers);
+        form.append('proxy', proxy);
+        form.append('delay_mode', delayMode);
+        form.append('delay_min', delayMin);
+        form.append('delay_max', delayMax);
+
+        try {
+            const res = await fetch('/api/start', { method: 'POST', body: form });
+            const data = await res.json();
+            if (data.error) { alert(data.error); resetUI(); return; }
+
+            currentJobId = data.job_id;
+            document.getElementById('stat-total').textContent = data.total;
+            setStatus('running', '#FF4500');
+
+            // Connect WebSocket
+            connectWS(data.job_id, data.total);
+        } catch (e) {
+            alert('Error: ' + e.message);
+            resetUI();
+        }
+    }
+
+    function connectWS(jobId, total) {
+        const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+        ws = new WebSocket(`${proto}://${location.host}/ws/${jobId}`);
+
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'status') {
+                updateStats(msg.sent, msg.failed, msg.total);
+                const pct = msg.total > 0 ? ((msg.sent + msg.failed) / msg.total * 100) : 0;
+                document.getElementById('progress-bar').style.width = pct + '%';
+                if (msg.status === 'done' || msg.status === 'stopped') {
+                    setStatus(msg.status === 'done' ? 'complete' : 'stopped', msg.status === 'done' ? '#22c55e' : '#ef4444');
+                    resetUI();
+                }
+            } else if (msg.phone) {
+                addResult(msg);
+            }
+        };
+
+        ws.onerror = () => { setStatus('error', '#ef4444'); resetUI(); };
+        ws.onclose = () => {};
+    }
+
+    function addResult(r) {
+        const list = document.getElementById('results-list');
+        // Remove placeholder
+        if (list.querySelector('.text-center')) list.innerHTML = '';
+
+        const div = document.createElement('div');
+        div.className = 'slide-in flex items-center gap-3 p-3 rounded-xl bg-black/30 border border-white/5';
+
+        const isOk = r.status === 'sent';
+        div.innerHTML = `
+            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isOk ? 'bg-green-500/10' : 'bg-red-500/10'}">
+                <iconify-icon icon="${isOk ? 'lucide:check' : 'lucide:x'}" class="${isOk ? 'text-green-400' : 'text-red-400'}"></iconify-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="text-sm font-mono truncate">${r.phone}</div>
+                <div class="text-xs ${isOk ? 'text-green-400/70' : 'text-red-400/70'} truncate">${isOk ? (r.mobile || 'Sent') : (r.error || 'Failed')}</div>
+            </div>
+            <span class="text-[10px] text-gray-600 shrink-0">${r.time || ''}</span>
+        `;
+        list.appendChild(div);
+        list.scrollTop = list.scrollHeight;
+    }
+
+    function updateStats(sent, failed, total) {
+        animateStat('stat-sent', sent);
+        animateStat('stat-failed', failed);
+        animateStat('stat-total', total);
+    }
+
+    function animateStat(id, val) {
+        const el = document.getElementById(id);
+        if (el.textContent != val) {
+            el.textContent = val;
+            el.classList.add('count-bump');
+            setTimeout(() => el.classList.remove('count-bump'), 300);
+        }
+    }
+
+    function setStatus(text, color) {
+        document.getElementById('status-text').textContent = text.charAt(0).toUpperCase() + text.slice(1);
+        document.getElementById('status-dot').style.backgroundColor = color;
+        if (text === 'running') document.getElementById('status-dot').classList.add('animate-pulse');
+        else document.getElementById('status-dot').classList.remove('animate-pulse');
+    }
+
+    function resetUI() {
+        document.getElementById('btn-launch').disabled = false;
+        document.getElementById('btn-launch').classList.remove('opacity-50');
+        document.getElementById('btn-stop').disabled = true;
+    }
+
+    async function stopBlast() {
+        if (currentJobId) {
+            await fetch(`/api/stop/${currentJobId}`, { method: 'POST' });
+        }
+    }
+    </script>
+</body>
+</html>
